@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">WeatherAppUP</string>
+    <string name="cityName_text">City: %1$s</string>
+    <string name="temperature_text">Temperature: %1$.1f °C</string>
+    <string name="feelslike_text">Feels like: %1$.1f °C</string>
+    <string name="humidity_text">Humidity: %1$d %% </string>
+    <string name="windSpeed_text">Wind speed: %1$.1f km/h</string>
+    <string name="findCity_btn_text">Find city</string>
+    <string name="showChosenCities_btn_text">Chosen cities</string>
 </resources>

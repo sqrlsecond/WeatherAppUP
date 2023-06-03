@@ -16,16 +16,19 @@ data class WeatherResponse(
         // Состояние (ясно, дождь и т.д.)
         val condition: Condition,
 
+        // Ощущаемая температура в градусах Цельсия
+        val feelslike_c: Float,
+
+        // Скорость ветра в км/ч
+        val wind_kph: Float,
+
+        // Влажность в процентах
+        val humidity: Int
+
         ) {
         data class Condition(
-            // Ощущаемая температура в градусах Цельсия
-            val feelslike_c: Float,
-
-            // Скорость ветра в км/ч
-            val wind_kph: Float,
-
-            // Влажность в процентах
-            val humidity: Int
+            val code: Int
         )
+
     }
 }
