@@ -3,6 +3,7 @@ package ru.makarovda.weatherappup
 import android.app.Application
 import ru.makarovda.weatherappup.di.AppComponent
 import ru.makarovda.weatherappup.di.DaggerAppComponent
+import ru.makarovda.weatherappup.di.DatabaseModule
 
 class WeatherApp: Application() {
 
@@ -11,7 +12,7 @@ class WeatherApp: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        appComponent = DaggerAppComponent.create()
+        appComponent = DaggerAppComponent.builder().databaseModule(DatabaseModule(this)).build()
 
     }
 }

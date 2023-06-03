@@ -31,6 +31,11 @@ class WeatherFragment() : Fragment() {
 
     private val weatherViewModel: WeatherViewModel by viewModels{ WeatherViewModel.Factory }
 
+    private var longitude: Float = 0.0f
+
+    private var latitude: Float = 0.0f
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -54,6 +59,7 @@ class WeatherFragment() : Fragment() {
             cityChosen = !cityChosen
             if (cityChosen) {
                 (it as ImageView).setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.baseline_star_rate_24))
+                weatherViewModel.asyncAddChosenCity(String.format("%.2f,%.2f", latitude, longitude))
             } else {
                 (it as ImageView).setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.baseline_star_border_24))
             }
@@ -62,6 +68,11 @@ class WeatherFragment() : Fragment() {
         view.findViewById<Button>(R.id.findCity_button).setOnClickListener {
             val findCityFragment = FindCityFragment()
             findCityFragment.show(parentFragmentManager,null)
+        }
+
+        view.findViewById<Button>(R.id.showChosenCities_button).setOnClickListener {
+            val chosenCitiesFragment = ChosenCitiesFragment()
+            chosenCitiesFragment.show(parentFragmentManager, null)
         }
 
         if (ActivityCompat.checkSelfPermission(
@@ -85,6 +96,8 @@ class WeatherFragment() : Fragment() {
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location : Location? ->
                 if(location != null) {
+                    longitude = location.longitude.toFloat()
+                    latitude = location.latitude.toFloat()
                     weatherViewModel.asyncRequestWeather( String.format("%f,%f", location.latitude, location.longitude))
                 }
                 //location.latitude

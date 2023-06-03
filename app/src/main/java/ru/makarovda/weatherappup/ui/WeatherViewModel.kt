@@ -29,6 +29,24 @@ class WeatherViewModel(private val repository: IRepository): ViewModel() {
         }
     }
 
+    fun asyncAddChosenCity(location: String){
+        viewModelScope.launch(Dispatchers.IO) {
+            //Так как координаты и название передаются в качестве строки
+            repository.findCities(location).collect {
+                repository.addChosenCity(it[0])
+            }
+        }
+    }
+
+    fun asyncDeleteChosenCity(location: String){
+        viewModelScope.launch(Dispatchers.IO) {
+            //Так как координаты и название передаются в качестве строки
+            repository.findCities(location).collect {
+                repository.removeChosenCity(it[0])
+            }
+        }
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {

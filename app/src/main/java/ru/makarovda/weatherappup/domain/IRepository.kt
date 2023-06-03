@@ -8,4 +8,10 @@ interface IRepository {
 
     suspend fun findCities(name: String): Flow<List<City>>
 
+    suspend fun getChosenCities(): Flow<List<City>>
+
+    suspend fun addChosenCity(city: City)
+
+    suspend fun removeChosenCity(city: City)
+
 }
