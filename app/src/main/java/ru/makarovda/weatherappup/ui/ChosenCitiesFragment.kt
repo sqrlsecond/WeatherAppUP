@@ -1,5 +1,6 @@
 package ru.makarovda.weatherappup.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,8 @@ class ChosenCitiesFragment: BottomSheetDialogFragment() {
 
     val chosenCityViewModel: ChosenCityViewModel by activityViewModels { ChosenCityViewModel.Factory }
 
+    private var choseCityHandler: (CityDomain) -> Unit = {  }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -24,11 +27,22 @@ class ChosenCitiesFragment: BottomSheetDialogFragment() {
         return inflater.inflate(R.layout.fragment_chosen_city, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
 
+        if (context is MainActivity) {
+            choseCityHandler = context::cityChose
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         val recView = view.findViewById<RecyclerView>(R.id.chosenCities_recView)
 
-        val adapter = CitiesChosenAdapter(ArrayList<CityDomain>(), chosenCityViewModel::removeChosenCity)
+        val adapter = CitiesChosenAdapter(ArrayList<CityDomain>(), chosenCityViewModel::removeChosenCity) {
+            choseCityHandler(it)
+            dismiss()
+        }
         recView.adapter = adapter
         recView.layoutManager = LinearLayoutManager(requireActivity())
 
@@ -40,7 +54,7 @@ class ChosenCitiesFragment: BottomSheetDialogFragment() {
                 }
             }
         }
-        super.onViewCreated(view, savedInstanceState)
+
     }
 
     override fun onResume() {

@@ -11,7 +11,8 @@ import ru.makarovda.weatherappup.R
 import ru.makarovda.weatherappup.domain.CityDomain
 
 class CitiesFindAdapter(var cities: List<CityDomain>,
-                        val iconClickListener: (CityDomain) -> Unit
+                        val iconClickListener: (CityDomain) -> Unit,
+                        val itemClickListener: (CityDomain) -> Unit
                         ): RecyclerView.Adapter<CitiesFindAdapter.CitiesViewHolder>() {
 
 
@@ -55,6 +56,10 @@ class CitiesFindAdapter(var cities: List<CityDomain>,
             holder.chosenState = true
             (it as ImageView).setImageDrawable(ContextCompat.getDrawable(it.context, R.drawable.baseline_star_rate_24))
             iconClickListener(cities[position])
+        }
+
+        holder.itemView.setOnClickListener {
+            itemClickListener(cities[position])
         }
     }
 }

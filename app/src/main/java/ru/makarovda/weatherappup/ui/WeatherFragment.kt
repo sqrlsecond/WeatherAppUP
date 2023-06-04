@@ -32,12 +32,14 @@ class WeatherFragment() : Fragment() {
 
     private var cityChosen = false
 
-    private val weatherViewModel: WeatherViewModel by viewModels{ WeatherViewModel.Factory }
+    // Общая с MainActivity
+    private val weatherViewModel: WeatherViewModel by activityViewModels{ WeatherViewModel.Factory }
 
     private var longitude: Float = 0.0f
 
     private var latitude: Float = 0.0f
 
+    // Общая с ChosenCityFragment
     private val chosenCityViewModel: ChosenCityViewModel by activityViewModels { ChosenCityViewModel.Factory }
 
     override fun onCreateView(
@@ -80,33 +82,7 @@ class WeatherFragment() : Fragment() {
             chosenCitiesFragment.show(parentFragmentManager, null)
         }
 
-        if (ActivityCompat.checkSelfPermission(
-                requireActivity(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireActivity(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return
-        }
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location : Location? ->
-                if(location != null) {
-                    longitude = location.longitude.toFloat()
-                    latitude = location.latitude.toFloat()
-                    weatherViewModel.asyncRequestWeather( String.format("%f,%f", location.latitude, location.longitude))
-                }
 
-            }
         lifecycleScope.launchWhenResumed {
             weatherViewModel.weatherResponseFlow.collect{
                 if (it is RequestState.WeatherSuccess) {

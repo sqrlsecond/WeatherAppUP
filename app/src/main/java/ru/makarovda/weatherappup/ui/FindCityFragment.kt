@@ -1,5 +1,6 @@
 package ru.makarovda.weatherappup.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,12 +20,22 @@ class FindCityFragment: BottomSheetDialogFragment() {
 
     val findCityVM: FindCityViewModel by viewModels{ FindCityViewModel.Factory }
 
+    private var choseCityHandler: (CityDomain) -> Unit = {  }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_find_city, container, false)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        if (context is MainActivity) {
+            choseCityHandler = context::cityChose
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -39,7 +50,10 @@ class FindCityFragment: BottomSheetDialogFragment() {
             }
         }
 
-        val adapter = CitiesFindAdapter(ArrayList<CityDomain>(), findCityVM::addChosenCity)
+        val adapter = CitiesFindAdapter(ArrayList<CityDomain>(), findCityVM::addChosenCity){
+            choseCityHandler(it)
+            dismiss()
+        }
 
         val recView = view.findViewById<RecyclerView>(R.id.cities_recView)
         recView.adapter = adapter

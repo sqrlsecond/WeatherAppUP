@@ -10,7 +10,8 @@ import ru.makarovda.weatherappup.R
 import ru.makarovda.weatherappup.domain.CityDomain
 
 class CitiesChosenAdapter(var cities: List<CityDomain>,
-                          val iconClickListener: (CityDomain) -> Unit
+                          val iconClickListener: (CityDomain) -> Unit,
+                          val itemClickListener: (CityDomain) -> Unit
                         ): RecyclerView.Adapter<CitiesChosenAdapter.CitiesViewHolder>() {
 
     class CitiesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
@@ -19,8 +20,6 @@ class CitiesChosenAdapter(var cities: List<CityDomain>,
         val countryTextView: TextView
 
         val deleteIcon: ImageView
-
-        //var chosenState = false
 
         init{
             cityNameTextView = itemView.findViewById(R.id.cityName_textView)
@@ -41,6 +40,9 @@ class CitiesChosenAdapter(var cities: List<CityDomain>,
         holder.countryTextView.text = cities[position].country
         holder.deleteIcon.setOnClickListener {
             iconClickListener(cities[position])
+        }
+        holder.itemView.setOnClickListener {
+            itemClickListener(cities[position])
         }
     }
 }
