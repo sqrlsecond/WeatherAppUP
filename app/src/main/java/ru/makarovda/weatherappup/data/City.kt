@@ -1,8 +1,7 @@
-package ru.makarovda.weatherappup.domain
+package ru.makarovda.weatherappup.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-
 
 @Entity(tableName = "cities")
 data class City(

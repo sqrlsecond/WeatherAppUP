@@ -4,9 +4,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import ru.makarovda.weatherappup.data.network.IWeatherService
 import ru.makarovda.weatherappup.data.storage.ChosenCitiesDao
-import ru.makarovda.weatherappup.domain.City
+import ru.makarovda.weatherappup.domain.CityDomain
 import ru.makarovda.weatherappup.domain.IRepository
-import ru.makarovda.weatherappup.data.network.WeatherResponse
 import ru.makarovda.weatherappup.domain.Weather
 import javax.inject.Inject
 
@@ -17,9 +16,9 @@ class Repository @Inject constructor(
 
     private val _weatherFlow = MutableSharedFlow<Weather>(replay = 1)
 
-    private val _citiesFlow = MutableSharedFlow<List<City>>(replay = 1)
+    private val _citiesFlow = MutableSharedFlow<List<CityDomain>>(replay = 1)
 
-    private val _chosenCitiesFlow = MutableSharedFlow<List<City>>(replay = 1)
+    private val _chosenCitiesFlow = MutableSharedFlow<List<CityDomain>>(replay = 1)
 
     override suspend fun getCurrentWeather(location: String): Flow<Weather>
     {
@@ -29,8 +28,14 @@ class Repository @Inject constructor(
 
             responseWeather.body()?.let {
                 val weather = Weather(
-                    responseCity,
-                    chosenCitiesDao.isCityChosen(responseCity.id),
+                    CityDomain(
+                        responseCity.id,
+                        responseCity.name,
+                        responseCity.country,
+                        responseCity.lat,
+                        responseCity.lon,
+                        chosenCitiesDao.isCityChosen(responseCity.id)
+                    ),
                     it.current.temp_c,
                     it.current.condition.code,
                     it.current.feelslike_c,
@@ -43,30 +48,74 @@ class Repository @Inject constructor(
         return _weatherFlow
     }
 
-    override suspend fun findCities(name: String): Flow<List<City>>
+    override suspend fun findCities(name: String): Flow<List<CityDomain>>
     {
         val response = networkService.getCities(name)
         if(response.isSuccessful){
             response.body()?.let {
-                _citiesFlow.emit(it)
+                val citiesFromDb = chosenCitiesDao.getChosenCities()
+                val citiesDomain = ArrayList<CityDomain>(it.size)
+                it.forEach {
+                    citiesDomain.add(
+                        CityDomain(
+                            it.id,
+                            it.name,
+                            it.country,
+                            it.lat,
+                            it.lon,
+                            citiesFromDb.contains(it)
+                        )
+                    )
+                }
+                _citiesFlow.emit(citiesDomain)
             }
         }
         return _citiesFlow
     }
 
-    override suspend fun getChosenCities(): Flow<List<City>> {
-        _chosenCitiesFlow.emit(chosenCitiesDao.getChosenCities())
+    override suspend fun getChosenCities(): Flow<List<CityDomain>> {
+        val cities = chosenCitiesDao.getChosenCities()
+        val citiesDomain = ArrayList<CityDomain>(cities.size)
+
+        cities.forEach {
+            citiesDomain.add(
+                CityDomain(
+                    it.id,
+                    it.name,
+                    it.country,
+                    it.lat,
+                    it.lon,
+                    true
+                )
+            )
+        }
+
+        _chosenCitiesFlow.emit(citiesDomain)
         return _chosenCitiesFlow
     }
 
-    override suspend fun addChosenCity(city: City) {
-        chosenCitiesDao.addCity(city)
-        _chosenCitiesFlow.emit(chosenCitiesDao.getChosenCities())
+    override suspend fun addChosenCity(city: CityDomain) {
+        val cityEntity = City(
+            city.id,
+            city.name,
+            city.country,
+            city.lat,
+            city.lon,
+        )
+        chosenCitiesDao.addCity(cityEntity)
+        getChosenCities()
     }
 
-    override suspend fun removeChosenCity(city: City) {
-        chosenCitiesDao.removeCity(city)
-        _chosenCitiesFlow.emit(chosenCitiesDao.getChosenCities())
+    override suspend fun removeChosenCity(city: CityDomain) {
+        val cityEntity = City(
+            city.id,
+            city.name,
+            city.country,
+            city.lat,
+            city.lon,
+        )
+        chosenCitiesDao.removeCity(cityEntity)
+        getChosenCities()
     }
 
     private suspend fun getCity(location: String): City?{

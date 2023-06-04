@@ -8,10 +8,10 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ru.makarovda.weatherappup.WeatherApp
-import ru.makarovda.weatherappup.domain.City
+import ru.makarovda.weatherappup.data.City
+import ru.makarovda.weatherappup.domain.CityDomain
 
 import ru.makarovda.weatherappup.domain.IRepository
 
@@ -30,13 +30,13 @@ class WeatherViewModel(private val repository: IRepository): ViewModel() {
         }
     }
 
-    fun asyncAddChosenCity(city: City){
+    fun asyncAddChosenCity(city: CityDomain){
         viewModelScope.launch(Dispatchers.IO) {
             repository.addChosenCity(city)
         }
     }
 
-    fun asyncDeleteChosenCity(city: City){
+    fun asyncDeleteChosenCity(city: CityDomain){
         viewModelScope.launch(Dispatchers.IO) {
             repository.removeChosenCity(city)
         }

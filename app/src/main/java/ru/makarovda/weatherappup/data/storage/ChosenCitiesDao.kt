@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import ru.makarovda.weatherappup.domain.City
+import ru.makarovda.weatherappup.data.City
 
 
 @Dao

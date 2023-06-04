@@ -14,6 +14,7 @@ import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.findFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -37,6 +38,7 @@ class WeatherFragment() : Fragment() {
 
     private var latitude: Float = 0.0f
 
+    private val chosenCityViewModel: ChosenCityViewModel by activityViewModels { ChosenCityViewModel.Factory }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -118,9 +120,23 @@ class WeatherFragment() : Fragment() {
                     } else if (it.response.condition > 1180) {
                         weatherIcon.setImageDrawable (ContextCompat.getDrawable(requireActivity(), R.drawable.rain_icon))
                     }
-                    cityChosen = it.response.isCityChosen
+                    cityChosen = it.response.city.isChosen
                     if (cityChosen) {
                         chosenIcon.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.baseline_star_rate_24))
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launchWhenResumed {
+            chosenCityViewModel.citiesResponseFlow.collect {
+                if (it is RequestState.ChosenCitiesSuccess) {
+                    cityChosen = it.response.contains((weatherViewModel.weatherResponseFlow.value as RequestState.WeatherSuccess).response.city)
+                    if (cityChosen) {
+                        chosenIcon.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.baseline_star_rate_24))
+                    } else {
+                        chosenIcon.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.baseline_star_border_24))
+
                     }
                 }
             }

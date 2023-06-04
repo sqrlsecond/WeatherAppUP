@@ -1,11 +1,9 @@
 package ru.makarovda.weatherappup.domain
 
+
 data class Weather(
     // Информация о городе
-    val city: City,
-
-    // Находится ли этот город в избранном
-    val isCityChosen: Boolean,
+    val city: CityDomain,
 
     // Температура в градусах Цельсия
     val temp_c: Float,

@@ -11,9 +11,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.coroutines.flow.collect
 import ru.makarovda.weatherappup.R
-import ru.makarovda.weatherappup.domain.City
+import ru.makarovda.weatherappup.data.City
+import ru.makarovda.weatherappup.domain.CityDomain
 
 class FindCityFragment: BottomSheetDialogFragment() {
 
@@ -39,7 +39,7 @@ class FindCityFragment: BottomSheetDialogFragment() {
             }
         }
 
-        val adapter = CitiesAdapter(ArrayList<City>())
+        val adapter = CitiesFindAdapter(ArrayList<CityDomain>(), findCityVM::addChosenCity)
 
         val recView = view.findViewById<RecyclerView>(R.id.cities_recView)
         recView.adapter = adapter

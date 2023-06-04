@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import ru.makarovda.weatherappup.WeatherApp
+import ru.makarovda.weatherappup.domain.CityDomain
 import ru.makarovda.weatherappup.domain.IRepository
 
 class ChosenCityViewModel(private val repository: IRepository): ViewModel() {
@@ -24,6 +25,13 @@ class ChosenCityViewModel(private val repository: IRepository): ViewModel() {
                 _citiesResponseFlow.emit(RequestState.ChosenCitiesSuccess(it))
             }
         }
+    }
+
+    fun removeChosenCity(cityDomain: CityDomain) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.removeChosenCity(cityDomain)
+        }
+        asyncGetChosenCity()
     }
 
     companion object {

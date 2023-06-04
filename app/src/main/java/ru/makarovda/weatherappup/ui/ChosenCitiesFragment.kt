@@ -4,17 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import ru.makarovda.weatherappup.R
-import ru.makarovda.weatherappup.domain.City
+import ru.makarovda.weatherappup.domain.CityDomain
 
 class ChosenCitiesFragment: BottomSheetDialogFragment() {
 
-    val chosenCityViewModel: ChosenCityViewModel by viewModels { ChosenCityViewModel.Factory }
+    val chosenCityViewModel: ChosenCityViewModel by activityViewModels { ChosenCityViewModel.Factory }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,7 +28,7 @@ class ChosenCitiesFragment: BottomSheetDialogFragment() {
 
         val recView = view.findViewById<RecyclerView>(R.id.chosenCities_recView)
 
-        val adapter = CitiesAdapter(ArrayList<City>())
+        val adapter = CitiesChosenAdapter(ArrayList<CityDomain>(), chosenCityViewModel::removeChosenCity)
         recView.adapter = adapter
         recView.layoutManager = LinearLayoutManager(requireActivity())
 
