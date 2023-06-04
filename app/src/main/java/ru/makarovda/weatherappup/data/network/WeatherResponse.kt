@@ -1,4 +1,4 @@
-package ru.makarovda.weatherappup.domain
+package ru.makarovda.weatherappup.data.network
 
 data class WeatherResponse(
     val location: Location,

@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ru.makarovda.weatherappup.WeatherApp
+import ru.makarovda.weatherappup.domain.City
 
 import ru.makarovda.weatherappup.domain.IRepository
 
@@ -29,21 +30,15 @@ class WeatherViewModel(private val repository: IRepository): ViewModel() {
         }
     }
 
-    fun asyncAddChosenCity(location: String){
+    fun asyncAddChosenCity(city: City){
         viewModelScope.launch(Dispatchers.IO) {
-            //Так как координаты и название передаются в качестве строки
-            repository.findCities(location).collect {
-                repository.addChosenCity(it[0])
-            }
+            repository.addChosenCity(city)
         }
     }
 
-    fun asyncDeleteChosenCity(location: String){
+    fun asyncDeleteChosenCity(city: City){
         viewModelScope.launch(Dispatchers.IO) {
-            //Так как координаты и название передаются в качестве строки
-            repository.findCities(location).collect {
-                repository.removeChosenCity(it[0])
-            }
+            repository.removeChosenCity(city)
         }
     }
 

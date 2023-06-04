@@ -40,9 +40,11 @@ class ChosenCitiesFragment: BottomSheetDialogFragment() {
                 }
             }
         }
-
-        chosenCityViewModel.asyncGetChosenCity()
-
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        chosenCityViewModel.asyncGetChosenCity()
     }
 }

@@ -1,10 +1,11 @@
 package ru.makarovda.weatherappup.domain
 
 import kotlinx.coroutines.flow.Flow
+import ru.makarovda.weatherappup.data.network.WeatherResponse
 
 interface IRepository {
 
-    suspend fun getCurrentWeather(location: String): Flow<WeatherResponse>
+    suspend fun getCurrentWeather(location: String): Flow<Weather>
 
     suspend fun findCities(name: String): Flow<List<City>>
 

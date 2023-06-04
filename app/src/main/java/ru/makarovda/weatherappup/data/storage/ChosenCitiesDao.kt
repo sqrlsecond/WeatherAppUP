@@ -19,6 +19,6 @@ interface ChosenCitiesDao {
     @Delete
     fun removeCity(city: City)
 
-    @Query("SELECT EXISTS(SELECT * FROM cities WHERE id = :id)")
-    fun isCityChosen(id : Int) : Boolean
+    @Query("SELECT EXISTS(SELECT * FROM cities WHERE id = :cityId)")
+    fun isCityChosen(cityId: Int): Boolean
 }

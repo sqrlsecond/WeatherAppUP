@@ -4,7 +4,6 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 import ru.makarovda.weatherappup.domain.City
-import ru.makarovda.weatherappup.domain.WeatherResponse
 
 interface IWeatherService {
 

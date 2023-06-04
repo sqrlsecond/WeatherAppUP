@@ -20,7 +20,9 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import ru.makarovda.weatherappup.R
 
 class WeatherFragment() : Fragment() {
@@ -59,9 +61,10 @@ class WeatherFragment() : Fragment() {
             cityChosen = !cityChosen
             if (cityChosen) {
                 (it as ImageView).setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.baseline_star_rate_24))
-                weatherViewModel.asyncAddChosenCity(String.format("%.2f,%.2f", latitude, longitude))
+                weatherViewModel.asyncAddChosenCity((weatherViewModel.weatherResponseFlow.value as RequestState.WeatherSuccess).response.city)
             } else {
                 (it as ImageView).setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.baseline_star_border_24))
+                weatherViewModel.asyncDeleteChosenCity((weatherViewModel.weatherResponseFlow.value as RequestState.WeatherSuccess).response.city)
             }
         }
 
@@ -100,26 +103,27 @@ class WeatherFragment() : Fragment() {
                     latitude = location.latitude.toFloat()
                     weatherViewModel.asyncRequestWeather( String.format("%f,%f", location.latitude, location.longitude))
                 }
-                //location.latitude
-                //location.longitude
+
             }
         lifecycleScope.launchWhenResumed {
             weatherViewModel.weatherResponseFlow.collect{
                 if (it is RequestState.WeatherSuccess) {
-                    cityNameTextView.text = getString(R.string.cityName_text, it.response.location.name)
-                    temperatureTextView.text = getString(R.string.temperature_text, it.response.current.temp_c)
-                    feelsLikeTemperatureTextView.text = getString(R.string.feelslike_text, it.response.current.feelslike_c)
-                    windSpeedTextView.text = getString(R.string.windSpeed_text, it.response.current.wind_kph)
-                    humidityTemperatureTextView.text = getString(R.string.humidity_text, it.response.current.humidity)
-                    if(it.response.current.condition.code in 1001..1065) {
+                    cityNameTextView.text = getString(R.string.cityName_text, it.response.city.name)
+                    temperatureTextView.text = getString(R.string.temperature_text, it.response.temp_c)
+                    feelsLikeTemperatureTextView.text = getString(R.string.feelslike_text, it.response.feelslike_c)
+                    windSpeedTextView.text = getString(R.string.windSpeed_text, it.response.wind_kph)
+                    humidityTemperatureTextView.text = getString(R.string.humidity_text, it.response.humidity)
+                    if(it.response.condition in 1001..1065) {
                         weatherIcon.setImageDrawable (ContextCompat.getDrawable(requireActivity(), R.drawable.baseline_wb_cloudy_24))
-                    } else if (it.response.current.condition.code > 1180) {
+                    } else if (it.response.condition > 1180) {
                         weatherIcon.setImageDrawable (ContextCompat.getDrawable(requireActivity(), R.drawable.rain_icon))
+                    }
+                    cityChosen = it.response.isCityChosen
+                    if (cityChosen) {
+                        chosenIcon.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.baseline_star_rate_24))
                     }
                 }
             }
         }
     }
-
-
 }
