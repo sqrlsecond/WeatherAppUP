@@ -1,10 +1,10 @@
-package ru.makarovda.weatherappup.data.storage
+package ru.makarovda.weaherappup.data.storage
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import ru.makarovda.weatherappup.data.City
+import ru.makarovda.weaherappup.data.City
 
 
 @Dao

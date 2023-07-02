@@ -1,7 +1,5 @@
 package ru.makarovda.weatherappup.domain
 
-import androidx.room.PrimaryKey
-
 data class CityDomain(
     val id: Int,
     val name: String,

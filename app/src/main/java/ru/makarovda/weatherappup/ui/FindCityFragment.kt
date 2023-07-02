@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import ru.makarovda.weatherappup.R
-import ru.makarovda.weatherappup.data.City
 import ru.makarovda.weatherappup.domain.CityDomain
 
 class FindCityFragment: BottomSheetDialogFragment() {

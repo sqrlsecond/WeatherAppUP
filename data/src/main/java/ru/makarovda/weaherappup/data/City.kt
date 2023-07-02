@@ -1,4 +1,4 @@
-package ru.makarovda.weatherappup.data
+package ru.makarovda.weaherappup.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

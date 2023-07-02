@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import ru.makarovda.weatherappup.WeatherApp
-import ru.makarovda.weatherappup.data.City
 import ru.makarovda.weatherappup.domain.CityDomain
 
 import ru.makarovda.weatherappup.domain.IRepository

@@ -1,9 +1,9 @@
-package ru.makarovda.weatherappup.data
+package ru.makarovda.weaherappup.data
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import ru.makarovda.weatherappup.data.network.IWeatherService
-import ru.makarovda.weatherappup.data.storage.ChosenCitiesDao
+import ru.makarovda.weaherappup.data.network.IWeatherService
+import ru.makarovda.weaherappup.data.storage.ChosenCitiesDao
 import ru.makarovda.weatherappup.domain.CityDomain
 import ru.makarovda.weatherappup.domain.IRepository
 import ru.makarovda.weatherappup.domain.Weather

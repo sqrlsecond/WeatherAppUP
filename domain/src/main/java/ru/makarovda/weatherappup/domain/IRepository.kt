@@ -1,7 +1,7 @@
 package ru.makarovda.weatherappup.domain
 
 import kotlinx.coroutines.flow.Flow
-import ru.makarovda.weatherappup.data.City
+
 
 interface IRepository {
 
