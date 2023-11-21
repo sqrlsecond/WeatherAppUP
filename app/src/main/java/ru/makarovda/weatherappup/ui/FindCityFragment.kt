@@ -8,10 +8,13 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.coroutines.launch
 import ru.makarovda.weatherappup.R
 import ru.makarovda.weatherappup.domain.CityDomain
 
@@ -58,11 +61,13 @@ class FindCityFragment: BottomSheetDialogFragment() {
         recView.adapter = adapter
         recView.layoutManager = LinearLayoutManager(requireActivity())
 
-        lifecycleScope.launchWhenResumed {
-            findCityVM.citiesResponseFlow.collect {
-                if (it is RequestState.FindCitiesSuccess) {
-                    adapter.cities = it.response
-                    adapter.notifyDataSetChanged()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED){
+                findCityVM.citiesResponseFlow.collect {
+                    if (it is RequestState.FindCitiesSuccess) {
+                        adapter.cities = it.response
+                        adapter.notifyDataSetChanged()
+                    }
                 }
             }
         }

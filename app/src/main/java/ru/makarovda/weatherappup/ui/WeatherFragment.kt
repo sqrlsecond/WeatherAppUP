@@ -17,7 +17,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.findFragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -33,7 +35,7 @@ class WeatherFragment() : Fragment() {
     private var cityChosen = false
 
     // Общая с MainActivity
-    private val weatherViewModel: WeatherViewModel by activityViewModels{ WeatherViewModel.Factory }
+    private val weatherViewModel: WeatherViewModel by activityViewModels { WeatherViewModel.Factory }
 
     private var longitude: Float = 0.0f
 
@@ -53,7 +55,7 @@ class WeatherFragment() : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val cityNameTextView  = view.findViewById<TextView>(R.id.city_textView)
+        val cityNameTextView = view.findViewById<TextView>(R.id.city_textView)
         val temperatureTextView = view.findViewById<TextView>(R.id.temperature_textView)
         val feelsLikeTemperatureTextView = view.findViewById<TextView>(R.id.feelslike_textView)
         val windSpeedTextView = view.findViewById<TextView>(R.id.windSpeed_textView)
@@ -64,17 +66,27 @@ class WeatherFragment() : Fragment() {
         chosenIcon.setOnClickListener {
             cityChosen = !cityChosen
             if (cityChosen) {
-                (it as ImageView).setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.baseline_star_rate_24))
+                (it as ImageView).setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireActivity(),
+                        R.drawable.baseline_star_rate_24
+                    )
+                )
                 weatherViewModel.asyncAddChosenCity((weatherViewModel.weatherResponseFlow.value as RequestState.WeatherSuccess).response.city)
             } else {
-                (it as ImageView).setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.baseline_star_border_24))
+                (it as ImageView).setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireActivity(),
+                        R.drawable.baseline_star_border_24
+                    )
+                )
                 weatherViewModel.asyncDeleteChosenCity((weatherViewModel.weatherResponseFlow.value as RequestState.WeatherSuccess).response.city)
             }
         }
 
         view.findViewById<Button>(R.id.findCity_button).setOnClickListener {
             val findCityFragment = FindCityFragment()
-            findCityFragment.show(parentFragmentManager,null)
+            findCityFragment.show(parentFragmentManager, null)
         }
 
         view.findViewById<Button>(R.id.showChosenCities_button).setOnClickListener {
@@ -83,39 +95,74 @@ class WeatherFragment() : Fragment() {
         }
 
 
-        lifecycleScope.launchWhenResumed {
-            weatherViewModel.weatherResponseFlow.collect{
-                if (it is RequestState.WeatherSuccess) {
-                    cityNameTextView.text = getString(R.string.cityName_text, it.response.city.name)
-                    temperatureTextView.text = getString(R.string.temperature_text, it.response.temp_c)
-                    feelsLikeTemperatureTextView.text = getString(R.string.feelslike_text, it.response.feelslike_c)
-                    windSpeedTextView.text = getString(R.string.windSpeed_text, it.response.wind_kph)
-                    humidityTemperatureTextView.text = getString(R.string.humidity_text, it.response.humidity)
-                    if(it.response.condition in 1001..1065) {
-                        weatherIcon.setImageDrawable (ContextCompat.getDrawable(requireActivity(), R.drawable.baseline_wb_cloudy_24))
-                    } else if (it.response.condition > 1180) {
-                        weatherIcon.setImageDrawable (ContextCompat.getDrawable(requireActivity(), R.drawable.rain_icon))
+        viewLifecycleOwner.lifecycleScope.launch {
+            // Отображение погоды
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                weatherViewModel.weatherResponseFlow.collect {
+                    if (it is RequestState.WeatherSuccess) {
+                        cityNameTextView.text =
+                            getString(R.string.cityName_text, it.response.city.name)
+                        temperatureTextView.text =
+                            getString(R.string.temperature_text, it.response.temp_c)
+                        feelsLikeTemperatureTextView.text =
+                            getString(R.string.feelslike_text, it.response.feelslike_c)
+                        windSpeedTextView.text =
+                            getString(R.string.windSpeed_text, it.response.wind_kph)
+                        humidityTemperatureTextView.text =
+                            getString(R.string.humidity_text, it.response.humidity)
+                        if (it.response.condition in 1001..1065) {
+                            weatherIcon.setImageDrawable(
+                                ContextCompat.getDrawable(
+                                    requireActivity(),
+                                    R.drawable.baseline_wb_cloudy_24
+                                )
+                            )
+                        } else if (it.response.condition > 1180) {
+                            weatherIcon.setImageDrawable(
+                                ContextCompat.getDrawable(
+                                    requireActivity(),
+                                    R.drawable.rain_icon
+                                )
+                            )
+                        }
+                        cityChosen = it.response.city.isChosen
+                        if (cityChosen) {
+                            chosenIcon.setImageDrawable(
+                                ContextCompat.getDrawable(
+                                    requireActivity(),
+                                    R.drawable.baseline_star_rate_24
+                                )
+                            )
+                        }
                     }
-                    cityChosen = it.response.city.isChosen
-                    if (cityChosen) {
-                        chosenIcon.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.baseline_star_rate_24))
+                }
+            }
+            // Отображение города
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                chosenCityViewModel.citiesResponseFlow.collect {
+                    if (it is RequestState.ChosenCitiesSuccess) {
+                        cityChosen =
+                            it.response.contains((weatherViewModel.weatherResponseFlow.value as RequestState.WeatherSuccess).response.city)
+                        if (cityChosen) {
+                            chosenIcon.setImageDrawable(
+                                ContextCompat.getDrawable(
+                                    requireActivity(),
+                                    R.drawable.baseline_star_rate_24
+                                )
+                            )
+                        } else {
+                            chosenIcon.setImageDrawable(
+                                ContextCompat.getDrawable(
+                                    requireActivity(),
+                                    R.drawable.baseline_star_border_24
+                                )
+                            )
+
+                        }
                     }
                 }
             }
         }
 
-        lifecycleScope.launchWhenResumed {
-            chosenCityViewModel.citiesResponseFlow.collect {
-                if (it is RequestState.ChosenCitiesSuccess) {
-                    cityChosen = it.response.contains((weatherViewModel.weatherResponseFlow.value as RequestState.WeatherSuccess).response.city)
-                    if (cityChosen) {
-                        chosenIcon.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.baseline_star_rate_24))
-                    } else {
-                        chosenIcon.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.baseline_star_border_24))
-
-                    }
-                }
-            }
-        }
     }
 }

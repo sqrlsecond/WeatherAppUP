@@ -6,16 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.coroutines.launch
 import ru.makarovda.weatherappup.R
 import ru.makarovda.weatherappup.domain.CityDomain
 
 class ChosenCitiesFragment: BottomSheetDialogFragment() {
 
-    val chosenCityViewModel: ChosenCityViewModel by activityViewModels { ChosenCityViewModel.Factory }
+    private val chosenCityViewModel: ChosenCityViewModel by activityViewModels { ChosenCityViewModel.Factory }
 
     private var choseCityHandler: (CityDomain) -> Unit = {  }
 
@@ -46,11 +49,13 @@ class ChosenCitiesFragment: BottomSheetDialogFragment() {
         recView.adapter = adapter
         recView.layoutManager = LinearLayoutManager(requireActivity())
 
-        lifecycleScope.launchWhenResumed {
-            chosenCityViewModel.citiesResponseFlow.collect {
-                if (it is RequestState.ChosenCitiesSuccess) {
-                    adapter.cities = it.response
-                    adapter.notifyDataSetChanged()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                chosenCityViewModel.citiesResponseFlow.collect {
+                    if (it is RequestState.ChosenCitiesSuccess) {
+                        adapter.cities = it.response
+                        adapter.notifyDataSetChanged()
+                    }
                 }
             }
         }
