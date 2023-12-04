@@ -1,4 +1,4 @@
-package ru.makarovda.weaherappup.data.di
+package ru.makarovda.weatherappup.data.di
 
 import android.content.Context
 import dagger.BindsInstance

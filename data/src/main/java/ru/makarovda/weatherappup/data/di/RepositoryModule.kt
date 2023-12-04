@@ -1,8 +1,8 @@
-package ru.makarovda.weaherappup.data.di
+package ru.makarovda.weatherappup.data.di
 
 import dagger.Binds
 import dagger.Module
-import ru.makarovda.weaherappup.data.Repository
+import ru.makarovda.weatherappup.data.Repository
 import ru.makarovda.weatherappup.domain.IRepository
 import javax.inject.Singleton
 

@@ -1,9 +1,6 @@
 package ru.makarovda.weatherappup.ui
 
-import android.Manifest
-import android.content.pm.PackageManager
-import android.graphics.drawable.Drawable
-import android.location.Location
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,22 +8,17 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.app.ActivityCompat
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.findFragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ru.makarovda.weatherappup.R
+import ru.makarovda.weatherappup.domain.RequestState
 
 class WeatherFragment() : Fragment() {
 
@@ -36,10 +28,6 @@ class WeatherFragment() : Fragment() {
 
     // Общая с MainActivity
     private val weatherViewModel: WeatherViewModel by activityViewModels { WeatherViewModel.Factory }
-
-    private var longitude: Float = 0.0f
-
-    private var latitude: Float = 0.0f
 
     // Общая с ChosenCityFragment
     private val chosenCityViewModel: ChosenCityViewModel by activityViewModels { ChosenCityViewModel.Factory }
@@ -135,34 +123,36 @@ class WeatherFragment() : Fragment() {
                             )
                         }
                     }
+                    else if (it is RequestState.Error) {
+                        Toast.makeText(requireActivity(), it.errorMsg, Toast.LENGTH_LONG).show()
+                    }
                 }
             }
             // Отображение города
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 chosenCityViewModel.citiesResponseFlow.collect {
-                    if (it is RequestState.ChosenCitiesSuccess) {
-                        cityChosen =
-                            it.response.contains((weatherViewModel.weatherResponseFlow.value as RequestState.WeatherSuccess).response.city)
-                        if (cityChosen) {
-                            chosenIcon.setImageDrawable(
-                                ContextCompat.getDrawable(
-                                    requireActivity(),
-                                    R.drawable.baseline_star_rate_24
-                                )
-                            )
-                        } else {
-                            chosenIcon.setImageDrawable(
-                                ContextCompat.getDrawable(
-                                    requireActivity(),
-                                    R.drawable.baseline_star_border_24
-                                )
-                            )
+                    cityChosen =
+                            it.contains((weatherViewModel.weatherResponseFlow.value as RequestState.WeatherSuccess).response.city)
 
-                        }
+                    if (cityChosen) {
+                        chosenIcon.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            requireActivity(),
+                            R.drawable.baseline_star_rate_24
+                            )
+                        )
+                    } else {
+                        chosenIcon.setImageDrawable(
+                            ContextCompat.getDrawable(
+                                requireActivity(),
+                                R.drawable.baseline_star_border_24
+                                )
+                        )
                     }
                 }
             }
         }
-
+        weatherViewModel.getCachedWeather()
+        weatherViewModel.asyncRequestWeather()
     }
 }

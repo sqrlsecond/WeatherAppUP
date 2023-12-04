@@ -1,10 +1,9 @@
 package ru.makarovda.weatherappup
 
 import android.app.Application
-import ru.makarovda.weaherappup.data.di.DaggerDataComponent
+import ru.makarovda.weatherappup.data.di.DaggerDataComponent
 import ru.makarovda.weatherappup.di.AppComponent
 import ru.makarovda.weatherappup.di.DaggerAppComponent
-import ru.makarovda.weaherappup.data.di.DatabaseModule
 
 class WeatherApp: Application() {
 

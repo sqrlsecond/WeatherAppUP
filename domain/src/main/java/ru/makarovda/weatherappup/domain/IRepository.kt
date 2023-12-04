@@ -5,9 +5,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface IRepository {
 
-    suspend fun getCurrentWeather(location: String): Flow<Weather>
+    suspend fun getCurrentWeather(latitude: Double, longitude: Double): RequestState
 
-    suspend fun findCities(name: String): Flow<List<CityDomain>>
+    suspend fun findCities(name: String): RequestState
 
     suspend fun getChosenCities(): Flow<List<CityDomain>>
 
@@ -15,4 +15,5 @@ interface IRepository {
 
     suspend fun removeChosenCity(city: CityDomain)
 
+    suspend fun getCachedWeather(): RequestState
 }

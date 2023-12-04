@@ -52,10 +52,8 @@ class ChosenCitiesFragment: BottomSheetDialogFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 chosenCityViewModel.citiesResponseFlow.collect {
-                    if (it is RequestState.ChosenCitiesSuccess) {
-                        adapter.cities = it.response
-                        adapter.notifyDataSetChanged()
-                    }
+                    adapter.cities = it
+                    adapter.notifyDataSetChanged()
                 }
             }
         }

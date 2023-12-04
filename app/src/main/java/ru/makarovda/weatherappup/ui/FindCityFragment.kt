@@ -17,6 +17,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.launch
 import ru.makarovda.weatherappup.R
 import ru.makarovda.weatherappup.domain.CityDomain
+import ru.makarovda.weatherappup.domain.RequestState
 
 class FindCityFragment: BottomSheetDialogFragment() {
 
@@ -64,7 +65,7 @@ class FindCityFragment: BottomSheetDialogFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED){
                 findCityVM.citiesResponseFlow.collect {
-                    if (it is RequestState.FindCitiesSuccess) {
+                    if (it is RequestState.CitiesSuccess) {
                         adapter.cities = it.response
                         adapter.notifyDataSetChanged()
                     }

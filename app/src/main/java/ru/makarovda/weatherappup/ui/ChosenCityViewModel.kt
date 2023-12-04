@@ -6,23 +6,26 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import ru.makarovda.weatherappup.WeatherApp
 import ru.makarovda.weatherappup.domain.CityDomain
 import ru.makarovda.weatherappup.domain.IRepository
+import ru.makarovda.weatherappup.domain.RequestState
 
 class ChosenCityViewModel(private val repository: IRepository): ViewModel() {
 
-    private val _citiesResponseFlow = MutableStateFlow<RequestState>(RequestState.InProgress)
-    val citiesResponseFlow: StateFlow<RequestState>
+    private val _citiesResponseFlow = MutableSharedFlow<List<CityDomain>>()
+    val citiesResponseFlow: SharedFlow<List<CityDomain>>
         get() = _citiesResponseFlow
 
     fun asyncGetChosenCity() {
         viewModelScope.launch(Dispatchers.IO) {
             repository.getChosenCities().collect {
-                _citiesResponseFlow.emit(RequestState.ChosenCitiesSuccess(it))
+                _citiesResponseFlow.emit(it)
             }
         }
     }

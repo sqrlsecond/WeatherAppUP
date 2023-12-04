@@ -1,9 +1,9 @@
-package ru.makarovda.weaherappup.data.network
+package ru.makarovda.weatherappup.data.network
 
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
-import ru.makarovda.weaherappup.data.City
+import ru.makarovda.weatherappup.data.City
 
 interface IWeatherService {
 

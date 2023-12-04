@@ -35,16 +35,14 @@ class MainActivity : AppCompatActivity() {
             requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,  Manifest.permission.ACCESS_COARSE_LOCATION), requestPermissionCode)
             return
         }
-        getWeather()
+        setLocation()
     }
 
     fun cityChose(city: CityDomain) {
-
-            weatherViewModel.asyncRequestWeather(String.format("%.2f,%.2f", city.lat, city.lon))
-
+        weatherViewModel.asyncRequestWeather(city.lat.toDouble(), city.lon.toDouble())
     }
 
-    private fun getWeather(){
+    private fun setLocation(){
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
@@ -53,9 +51,7 @@ class MainActivity : AppCompatActivity() {
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location: Location? ->
                     if (location != null) {
-                        weatherViewModel.asyncRequestWeather(
-                            String.format("%f,%f", location.latitude,location.longitude)
-                        )
+                        weatherViewModel.setCoordinates(location)
                     }
                 }
         }
@@ -68,12 +64,9 @@ class MainActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if(requestCode == requestPermissionCode){
-            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                finish()
-            } else {
-                getWeather()
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                setLocation()
             }
         }
-
     }
 }

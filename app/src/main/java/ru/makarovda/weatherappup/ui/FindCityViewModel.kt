@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import ru.makarovda.weatherappup.WeatherApp
 import ru.makarovda.weatherappup.domain.CityDomain
 import ru.makarovda.weatherappup.domain.IRepository
+import ru.makarovda.weatherappup.domain.RequestState
 
 class FindCityViewModel(private val repository: IRepository): ViewModel() {
 
@@ -21,11 +22,10 @@ class FindCityViewModel(private val repository: IRepository): ViewModel() {
 
     fun asyncFindCity(name: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.findCities(name).collect {
-                _citiesResponseFlow.emit(RequestState.FindCitiesSuccess(it))
+            val requestResult = repository.findCities(name)
+            _citiesResponseFlow.emit(requestResult)
             }
         }
-    }
 
     fun addChosenCity(city: CityDomain){
         viewModelScope.launch(Dispatchers.IO) {
