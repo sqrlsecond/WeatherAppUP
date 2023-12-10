@@ -9,7 +9,7 @@
         android:id="@+id/city_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/cityName_text"
+        android:text="@string/cityName_text_placeholder"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/weatherIcon_imageView" />
 
@@ -17,7 +17,7 @@
         android:id="@+id/temperature_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/temperature_text"
+        android:text="@string/temperature_text_placeholder"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/city_textView" />
 
@@ -25,7 +25,7 @@
         android:id="@+id/feelslike_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/feelslike_text"
+        android:text="@string/feelslike_text_placeholder"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/temperature_textView" />
 
@@ -33,7 +33,7 @@
         android:id="@+id/humidity_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/humidity_text"
+        android:text="@string/humidity_text_placeholder"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/windSpeed_textView" />
 
@@ -41,7 +41,7 @@
         android:id="@+id/windSpeed_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/windSpeed_text"
+        android:text="@string/windSpeed_text_placeholder"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/feelslike_textView" />
 

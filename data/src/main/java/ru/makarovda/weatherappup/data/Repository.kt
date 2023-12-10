@@ -53,10 +53,10 @@ class Repository @Inject constructor(
             }
         }
         catch(e: Exception) {
-            return RequestState.Error("Connection problem")
+            return RequestState.Error(RequestState.Error.ErrorCode.NO_CONNECTION)
         }
         
-        return RequestState.Error("Connection problem")
+        return RequestState.Error(RequestState.Error.ErrorCode.NO_CONNECTION)
     }
 
     override suspend fun findCities(name: String): RequestState
@@ -83,11 +83,11 @@ class Repository @Inject constructor(
                     RequestState.CitiesSuccess(citiesDomain)
                 }
             } else {
-                RequestState.Error(response.errorBody().toString())
+                RequestState.Error(RequestState.Error.ErrorCode.SERVER_ERROR)
             }
         }
         catch(e: Exception) {
-            RequestState.Error(e.toString())
+            RequestState.Error(RequestState.Error.ErrorCode.NO_CONNECTION)
         }
         return responseResult!!
     }
@@ -167,7 +167,7 @@ class Repository @Inject constructor(
     override suspend fun getCachedWeather(): RequestState {
         val weatherLast = readWeatherFromCache()
         if (weatherLast == null){
-            return RequestState.Error("")
+            return RequestState.Error(RequestState.Error.ErrorCode.FILE_NOT_FOUND)
         }
         return RequestState.WeatherSuccess(weatherLast)
     }

@@ -7,4 +7,12 @@
     <string name="windSpeed_text">Wind speed: %1$.1f km/h</string>
     <string name="findCity_btn_text">Find city</string>
     <string name="showChosenCities_btn_text">Chosen cities</string>
+
+    <string name="cityName_text_placeholder">City: --</string>
+    <string name="temperature_text_placeholder">Temperature: --</string>
+    <string name="feelslike_text_placeholder">Feels like: --</string>
+    <string name="humidity_text_placeholder">Humidity: --</string>
+    <string name="windSpeed_text_placeholder">Wind speed: --</string>
+
+    <string name="no_connection">No connection</string>
 </resources>

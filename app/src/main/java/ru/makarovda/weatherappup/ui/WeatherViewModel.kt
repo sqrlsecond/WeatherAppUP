@@ -58,6 +58,7 @@ class WeatherViewModel(private val repository: IRepository): ViewModel() {
     fun setCoordinates(location: Location) {
         currentLocation.latitude = location.latitude
         currentLocation.longitude = location.longitude
+        asyncRequestWeather()
     }
 
     fun asyncAddChosenCity(city: CityDomain){

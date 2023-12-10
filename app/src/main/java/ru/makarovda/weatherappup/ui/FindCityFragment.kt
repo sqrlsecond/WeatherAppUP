@@ -11,6 +11,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.DiffUtil.DiffResult
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -66,8 +68,11 @@ class FindCityFragment: BottomSheetDialogFragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED){
                 findCityVM.citiesResponseFlow.collect {
                     if (it is RequestState.CitiesSuccess) {
+                        val diffUtilRes = DiffUtil.calculateDiff(
+                            CitiesDiffUtil(adapter.cities, it.response)
+                        )
                         adapter.cities = it.response
-                        adapter.notifyDataSetChanged()
+                        diffUtilRes.dispatchUpdatesTo(adapter)
                     }
                 }
             }

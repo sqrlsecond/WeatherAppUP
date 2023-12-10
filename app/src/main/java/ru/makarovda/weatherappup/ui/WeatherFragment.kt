@@ -18,11 +18,11 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.location.FusedLocationProviderClient;
 import kotlinx.coroutines.launch
 import ru.makarovda.weatherappup.R
+import ru.makarovda.weatherappup.data.City
+import ru.makarovda.weatherappup.domain.CityDomain
 import ru.makarovda.weatherappup.domain.RequestState
 
 class WeatherFragment() : Fragment() {
-
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private var cityChosen = false
 
@@ -31,6 +31,8 @@ class WeatherFragment() : Fragment() {
 
     // Общая с ChosenCityFragment
     private val chosenCityViewModel: ChosenCityViewModel by activityViewModels { ChosenCityViewModel.Factory }
+
+    private var _city: CityDomain? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,6 +54,9 @@ class WeatherFragment() : Fragment() {
 
         val chosenIcon = view.findViewById<ImageView>(R.id.choosen_imageView)
         chosenIcon.setOnClickListener {
+            if (_city == null) {
+                return@setOnClickListener
+            }
             cityChosen = !cityChosen
             if (cityChosen) {
                 (it as ImageView).setImageDrawable(
@@ -60,7 +65,7 @@ class WeatherFragment() : Fragment() {
                         R.drawable.baseline_star_rate_24
                     )
                 )
-                weatherViewModel.asyncAddChosenCity((weatherViewModel.weatherResponseFlow.value as RequestState.WeatherSuccess).response.city)
+                weatherViewModel.asyncAddChosenCity(_city!!)
             } else {
                 (it as ImageView).setImageDrawable(
                     ContextCompat.getDrawable(
@@ -68,7 +73,7 @@ class WeatherFragment() : Fragment() {
                         R.drawable.baseline_star_border_24
                     )
                 )
-                weatherViewModel.asyncDeleteChosenCity((weatherViewModel.weatherResponseFlow.value as RequestState.WeatherSuccess).response.city)
+                weatherViewModel.asyncDeleteChosenCity(_city!!)
             }
         }
 
@@ -88,6 +93,7 @@ class WeatherFragment() : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 weatherViewModel.weatherResponseFlow.collect {
                     if (it is RequestState.WeatherSuccess) {
+                        _city = it.response.city
                         cityNameTextView.text =
                             getString(R.string.cityName_text, it.response.city.name)
                         temperatureTextView.text =
@@ -121,10 +127,17 @@ class WeatherFragment() : Fragment() {
                                     R.drawable.baseline_star_rate_24
                                 )
                             )
+                        } else {
+                            chosenIcon.setImageDrawable(
+                                ContextCompat.getDrawable(
+                                    requireActivity(),
+                                    R.drawable.baseline_star_border_24
+                                )
+                            )
                         }
                     }
                     else if (it is RequestState.Error) {
-                        Toast.makeText(requireActivity(), it.errorMsg, Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireActivity(), getString(R.string.no_connection), Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -153,6 +166,5 @@ class WeatherFragment() : Fragment() {
             }
         }
         weatherViewModel.getCachedWeather()
-        weatherViewModel.asyncRequestWeather()
     }
 }

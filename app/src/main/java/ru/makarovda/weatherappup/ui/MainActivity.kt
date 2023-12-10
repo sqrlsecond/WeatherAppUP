@@ -11,6 +11,7 @@ import com.google.android.gms.location.LocationServices
 
 import ru.makarovda.weatherappup.R
 import ru.makarovda.weatherappup.domain.CityDomain
+
 const val requestPermissionCode = 1
 class MainActivity : AppCompatActivity() {
 

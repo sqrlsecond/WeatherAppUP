@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import ru.makarovda.weatherappup.R
 import ru.makarovda.weatherappup.domain.CityDomain
@@ -62,4 +63,6 @@ class CitiesFindAdapter(var cities: List<CityDomain>,
             itemClickListener(cities[position])
         }
     }
+
+
 }
